@@ -11,10 +11,10 @@ jobs:
     
     steps:
     - name: Checkout Repository
-      uses: actions/checkout@v4
+      uses: actions/checkout@v2
     
     - name: Install Terraform
-      uses: hashicorp/setup-terraform@v2
+      uses: hashicorp/setup-terraform@v1
       with:
         terraform_version: 1.0.0
     
@@ -28,8 +28,17 @@ jobs:
     - name: Terraform Init
       run: terraform init
       
-    - name: Terraform Plan
-      run: terraform plan
+    - name: Terraform plan
+        id: plan
+        run: terraform plan -no-color -input=false -out planfile
+        continue-on-error: true
+
+    - name: Terraform plan status
+        if: steps.plan.outcome == 'failure' 
+        run: exit 1 
     
     - name: Terraform Apply
-      run: terraform apply -auto-approve
+        id: apple
+        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+        run: terraform apply -auto-approve -input=false -parallelism=1 planfile
+
