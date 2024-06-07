@@ -28,6 +28,7 @@ resource "aws_ecs_task_definition" "app" {
   container_definitions   = jsonencode([{
     name  = "hello-world-app"
     image = "jatin19/node-app:v1"  # Change to your Docker image URL
+    memory = 256
     portMappings = [{
       containerPort = 3000
       hostPort      = 3000
