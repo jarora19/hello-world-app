@@ -2,6 +2,14 @@ provider "aws" {
   region = "us-east-1"  # Change to your desired AWS region
 }
 
+terraform {
+  backend "s3" {
+    bucket = "testactionsfornode"
+    key    = "./terraform"
+    region = "us-east-1"
+  }
+}
+
 # Define VPC, subnets, security groups, etc.
 resource "aws_vpc" "main" {
   cidr_block = "10.0.0.0/16"
