@@ -56,6 +56,6 @@ resource "aws_security_group" "ecs" {
 }
 
 # Define outputs
-output "service_url" {
-  value = aws_ecs_service.app.load_balancer.first(1).dns_name
-}
+#output "service_url" {
+  #value = aws_ecs_service.app.load_balancer.first(1).dns_name
+#}
