@@ -25,7 +25,11 @@ resource "aws_ecs_cluster" "main" {
 # Define task definition
 resource "aws_ecs_task_definition" "app" {
   family                   = "hello-world-app"
-  container_definitions   = jsonencode([{
+  network_mode             = "awsvpc"
+  requires_compatibilities = ["FARGATE"]
+  cpu                      = "256"
+  memory                   = "512"
+  container_definitions    = jsonencode([{
     name  = "hello-world-app"
     image = "jatin19/node-app:v1"  # Change to your Docker image URL
     memory = 256
