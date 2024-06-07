@@ -11,10 +11,16 @@ resource "aws_vpc" "main" {
   enable_dns_hostnames = true
 }
 
-resource "aws_subnet" "public" {
+resource "aws_subnet" "public_a" {
   vpc_id            = aws_vpc.main.id
   cidr_block        = "10.0.1.0/24"
   availability_zone = "us-east-1a"  # Change to your desired AZ
+}
+
+resource "aws_subnet" "public_b" {
+  vpc_id            = aws_vpc.main.id
+  cidr_block        = "10.0.2.0/24"
+  availability_zone = "us-east-1b"  # Specify a different Availability Zone from subnet_a
 }
 
 # Define ECS cluster
@@ -83,7 +89,7 @@ resource "aws_lb" "my_lb" {
   internal           = false
   load_balancer_type = "application"
   security_groups    = [aws_security_group.ecs.id]
-  subnets            = aws_subnet.public[*].id
+  subnets            = [aws_subnet.public_a.id, aws_subnet.public_b.id]
 }
 
 resource "aws_lb_target_group" "my_target_group" {
@@ -91,6 +97,7 @@ resource "aws_lb_target_group" "my_target_group" {
   port     = 80
   protocol = "HTTP"
   vpc_id   = aws_vpc.main.id
+  target_type = "ip"
 }
 
 resource "aws_lb_listener" "my_lb_listener" {
