@@ -4,8 +4,6 @@ on:
   push:
     branches:
       - main
-env:
-BUCKET_TF_STATE: ${{ secrets.BUCKET_TF_STATE}}
 
 jobs:
   deploy:
@@ -31,7 +29,7 @@ jobs:
         aws-region: us-east-1  # Change to your desired AWS region
     
     - name: Terraform Init
-      run: terraform init -backend-config="bucket=$BUCKET_TF_STATE"
+      run: terraform init -backend-config="bucket=${{ secrets.BUCKET_TF_STATE}}"
       
     - name: Terraform plan
       run: terraform plan -no-color -input=false -out planfile
