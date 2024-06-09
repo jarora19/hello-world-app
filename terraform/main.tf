@@ -5,7 +5,7 @@ provider "aws" {
 terraform {
   backend "s3" {
     bucket = "nodeaction-01"
-    key    = "terraform/terraform.tfstate"
+    key    = "terraform.tfstate"
     region = "us-east-1"
   }
 }
@@ -145,13 +145,6 @@ resource "aws_lb_target_group" "my_target_group" {
   protocol    = "HTTP"
   vpc_id      = aws_vpc.main.id
   target_type = "ip"
-  health_check {
-    path                = "/"
-    interval            = 30
-    timeout             = 5
-    healthy_threshold   = 2
-    unhealthy_threshold = 2
-  }
 }
 
 resource "aws_lb_listener" "my_lb_listener" {
@@ -176,6 +169,7 @@ resource "aws_ecs_service" "app" {
     security_groups  = [aws_security_group.ecs.id]
     assign_public_ip = true
   }
+  depends_on = [aws_lb_listener.my_lb_listener]
   load_balancer {
     target_group_arn = aws_lb_target_group.my_target_group.arn
     container_name   = "hello-world-app"
